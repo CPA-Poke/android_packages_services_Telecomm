@@ -255,6 +255,8 @@ public final class CallsManager extends Call.ListenerBase {
         Log.d(this, "onSuccessfulIncomingCall");
         if (isCallBlacklisted(incomingCall)) {
             mCallLogManager.logCall(incomingCall, Calls.BLACKLIST_TYPE);
+            incomingCall.setDisconnectCause(
+                    new DisconnectCause(android.telephony.DisconnectCause.CALL_BLACKLISTED));
         } else {
             setCallState(incomingCall, CallState.RINGING);
 
