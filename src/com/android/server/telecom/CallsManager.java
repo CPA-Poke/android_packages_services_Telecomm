@@ -256,6 +256,7 @@ public final class CallsManager extends Call.ListenerBase {
     @Override
     public void onSuccessfulIncomingCall(Call incomingCall) {
         Log.d(this, "onSuccessfulIncomingCall");
+
         if (isCallBlacklisted(incomingCall)) {
             mCallLogManager.logCall(incomingCall, Calls.BLACKLIST_TYPE);
             incomingCall.setDisconnectCause(
@@ -268,7 +269,6 @@ public final class CallsManager extends Call.ListenerBase {
                     new DisconnectCause(android.telephony.DisconnectCause.CALL_BLACKLISTED));
         } else {
             setCallState(incomingCall, CallState.RINGING);
-
             if (hasMaximumRingingCalls(incomingCall.getTargetPhoneAccount().getId())) {
                 incomingCall.reject(false, null);
                 // since the call was not added to the list of calls, we have to call the missed
@@ -279,15 +279,6 @@ public final class CallsManager extends Call.ListenerBase {
                 incomingCall.mIsActiveSub = true;
                 addCall(incomingCall);
                 setActiveSubscription(incomingCall.getTargetPhoneAccount().getId());
-            }
-        } else {
-            setCallState(incomingCall, CallState.RINGING);
-            if (hasMaximumRingingCalls()) {
-                incomingCall.reject(false, null);
-                // since the call was not added to the list of calls, we have to call the missed
-                // call notifier and the call logger manually.
-                mMissedCallNotifier.showMissedCallNotification(incomingCall);
-                mCallLogManager.logCall(incomingCall, Calls.MISSED_TYPE);
             }
         }
     }
